@@ -6,13 +6,21 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import Button from "@mui/material/Button";
 
 function App() {
+  //what tab the user is on
+  const [tabValue, setTabValue] = React.useState("1");
+  //all data of the units
   const [unitData, setUnitData] = useState({});
+  //list of all the names of the units (for the search bar)
   const [unitNameList, setUnitNameList] = useState([]);
-  const [selectedUnit, setSelectedUnit] = useState({ label: "" });
-  const [selectedUnitData, setSelectedUnitData] = useState({});
+  //which units are currently selected
+  const [selectedUnits, setSelectedUnits] = useState([]);
+  //the data of the selected units
+  const [selectedUnitsData, setSelectedUnitsData] = useState([]);
 
+  //inital run to parse and store the data and set inital values
   useEffect(() => {
     const units = UnitParser();
     const modifiedUnits = Object.keys(units).map((i) => {
@@ -20,20 +28,48 @@ function App() {
     });
     setUnitData(units);
     setUnitNameList(modifiedUnits);
-    setSelectedUnit(modifiedUnits[0]);
+    setSelectedUnits([modifiedUnits[0], modifiedUnits[1]]);
+    setSelectedUnitsData([
+      units[modifiedUnits[0].label],
+      units[modifiedUnits[1].label],
+    ]);
+    console.log(units);
   }, []);
 
-  //Update data when value in autocomplete changes
-  useEffect(() => {
-    //handle when the box is cleared fully
-    if (!selectedUnit) {
-      return;
-    }
-    setSelectedUnitData(unitData[selectedUnit.label]);
-  }, [selectedUnit, unitData]);
+  //handle search boxes and data changing dynamically
+  const handleSearchBoxChange = (newValue, idx) => {
+    let tempSelectedUnits = selectedUnits;
+    tempSelectedUnits[idx] = newValue;
+    setSelectedUnits([...tempSelectedUnits]);
 
-  const [tabValue, setTabValue] = React.useState("1");
+    const label = newValue.label;
+    const data = unitData[label];
+    let tempSelectedUnitsData = selectedUnitsData;
+    tempSelectedUnitsData[idx] = data;
+    setSelectedUnitsData([...tempSelectedUnitsData]);
+  };
 
+  const addNewUnitToCompare = () => {
+    let tempSelectedUnits = selectedUnits;
+    tempSelectedUnits.push(unitNameList[0]);
+    setSelectedUnits([...tempSelectedUnits]);
+
+    let tempSelectedUnitsData = selectedUnitsData;
+    tempSelectedUnitsData.push(unitData[selectedUnits[0].label]);
+    setSelectedUnitsData([...tempSelectedUnitsData]);
+  };
+
+  const removeUnitComparision = (idx) => {
+    let tempSelectedUnits = selectedUnits;
+    tempSelectedUnits.splice(idx, 1);
+    setSelectedUnits([...tempSelectedUnits]);
+
+    let tempSelectedUnitsData = selectedUnitsData;
+    tempSelectedUnitsData.splice(idx, 1);
+    setSelectedUnitsData([...tempSelectedUnitsData]);
+  };
+
+  //handle tab changes
   const handleTabChange = (_, newValue) => {
     setTabValue(newValue);
   };
@@ -53,13 +89,30 @@ function App() {
             </TabList>
           </Box>
           <TabPanel value="1">
-            <div style={{ display: "flex", width: "100%" }}>
-              <Units
-                unitNameList={unitNameList}
-                selectedUnit={selectedUnit}
-                setSelectedUnit={setSelectedUnit}
-                selectedUnitData={selectedUnitData}
-              />
+            <Button variant="contained" onClick={() => addNewUnitToCompare()}>
+              Add new unit
+            </Button>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+              }}
+            >
+              {selectedUnits.map((_, idx) => {
+                return (
+                  <Units
+                    unitNameList={unitNameList}
+                    selectedUnits={selectedUnits}
+                    setSelectedUnits={setSelectedUnits}
+                    selectedUnitsData={selectedUnitsData}
+                    handleSearchBoxChange={handleSearchBoxChange}
+                    removeUnitComparision={removeUnitComparision}
+                    idx={idx}
+                    key={idx}
+                  />
+                );
+              })}
+
               {/* //todo unit comparision */}
               {/* <Units
                 unitNameList={unitNameList}
@@ -67,6 +120,7 @@ function App() {
                 setSelectedUnit={setSelectedUnit}
                 selectedUnitData={selectedUnitData}
               /> */}
+              {/* <Button variant="contained">Contained</Button> */}
             </div>
           </TabPanel>
           <TabPanel value="2">Item Two</TabPanel>

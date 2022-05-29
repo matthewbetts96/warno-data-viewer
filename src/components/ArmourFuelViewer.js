@@ -4,9 +4,23 @@ import CardContent from "@mui/material/CardContent";
 import { getArmourValues } from "../selectors";
 import Tooltip from "@mui/material/Tooltip";
 import styled from "styled-components";
+import SingleDataPoint from "./SingleDataPoint";
+import get from "lodash/get";
 
-export const ArmourViewer = ({ unit }) => {
+export const ArmourFuelViewer = ({ unit }) => {
   const { front, rear, sides, top } = getArmourValues(unit);
+  const items = [
+    {
+      title: "Fuel Capacity",
+      value: get(unit, "FuelCapacity"),
+      tooltip: "Fuel Capacity in the vehicle",
+    },
+    {
+      title: "FuelMoveDuration",
+      value: get(unit, "FuelMoveDuration"),
+      tooltip: "Duration that the vehicle can move for.",
+    },
+  ];
 
   return (
     <Card
@@ -35,6 +49,16 @@ export const ArmourViewer = ({ unit }) => {
             <div>Side: {sides}</div>
           </Tooltip>
         </div>
+        {items.map(({ title, value, tooltip }) => {
+          return (
+            <SingleDataPoint
+              key={title}
+              title={title}
+              value={value}
+              tooltip={tooltip}
+            />
+          );
+        })}
       </CardContent>
     </Card>
   );
@@ -49,4 +73,4 @@ const StyledDiv = styled.div`
   }
 `;
 
-export default ArmourViewer;
+export default ArmourFuelViewer;

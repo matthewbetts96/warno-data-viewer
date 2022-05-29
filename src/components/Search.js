@@ -4,16 +4,19 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 export default function Search({
   unitNameList = [],
-  selectedUnit,
-  setSelectedUnit,
+  selectedUnits,
+  handleSearchBoxChange,
+  idx,
 }) {
   return (
     <Autocomplete
       disablePortal
       id="combo-box-demo"
-      onChange={(_, newValue) => setSelectedUnit(newValue)}
+      onChange={(_, newValue) => {
+        handleSearchBoxChange(newValue, idx);
+      }}
       options={unitNameList}
-      value={selectedUnit}
+      value={selectedUnits[idx]}
       sx={{ minWidth: 400 }}
       renderInput={(params) => <TextField {...params} label="Units" />}
     />
