@@ -28,16 +28,16 @@ function App() {
     });
     setUnitData(units);
     setUnitNameList(modifiedUnits);
-    setSelectedUnits([modifiedUnits[0], modifiedUnits[1]]);
-    setSelectedUnitsData([
-      units[modifiedUnits[0].label],
-      units[modifiedUnits[1].label],
-    ]);
-    console.log(units);
+    setSelectedUnits([modifiedUnits[0]]);
+    setSelectedUnitsData([units[modifiedUnits[0].label]]);
   }, []);
 
   //handle search boxes and data changing dynamically
   const handleSearchBoxChange = (newValue, idx) => {
+    console.log(newValue);
+    if (!newValue) {
+      return;
+    }
     let tempSelectedUnits = selectedUnits;
     tempSelectedUnits[idx] = newValue;
     setSelectedUnits([...tempSelectedUnits]);
@@ -50,12 +50,18 @@ function App() {
   };
 
   const addNewUnitToCompare = () => {
+    // debugger;
     let tempSelectedUnits = selectedUnits;
     tempSelectedUnits.push(unitNameList[0]);
     setSelectedUnits([...tempSelectedUnits]);
 
     let tempSelectedUnitsData = selectedUnitsData;
-    tempSelectedUnitsData.push(unitData[selectedUnits[0].label]);
+    console.log(tempSelectedUnitsData);
+    tempSelectedUnitsData.push(
+      unitData[selectedUnits[selectedUnits.length - 1].label]
+    );
+    console.log(tempSelectedUnitsData);
+    console.log();
     setSelectedUnitsData([...tempSelectedUnitsData]);
   };
 

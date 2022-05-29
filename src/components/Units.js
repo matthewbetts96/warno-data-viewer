@@ -3,8 +3,10 @@ import Search from "./Search";
 import ArmourFuelViewer from "./ArmourFuelViewer";
 import GeneralInformationViewer from "./GeneralInformationViewer";
 import VisibilityViewer from "./VisibilityViewer";
+import WeaponViewer from "./WeaponViewer";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
+import get from "lodash/get";
 
 export const Units = ({
   unitNameList = [],
@@ -14,6 +16,10 @@ export const Units = ({
   handleSearchBoxChange,
   removeUnitComparision,
 }) => {
+  // debugger;
+  const currentUnit = selectedUnitsData[idx];
+  const weapons = get(currentUnit, "weapons");
+
   return (
     <OuterWrapper>
       <span>
@@ -35,9 +41,10 @@ export const Units = ({
         </span>
       </span>
       <DetailsWrapper>
-        <GeneralInformationViewer unit={selectedUnitsData[idx]} />
-        <ArmourFuelViewer unit={selectedUnitsData[idx]} />
-        <VisibilityViewer unit={selectedUnitsData[idx]} />
+        <GeneralInformationViewer unit={currentUnit} />
+        <ArmourFuelViewer unit={currentUnit} />
+        <VisibilityViewer unit={currentUnit} />
+        <WeaponViewer weapons={weapons} />
       </DetailsWrapper>
     </OuterWrapper>
   );

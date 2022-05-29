@@ -11,6 +11,14 @@ const removeAllBarNumbers = (i) => {
   return i.replace(/[^0-9.]*/g, "");
 };
 
+const traitsTokenFormatter = (i) => {
+  return i
+    .replace(/[,[\] ]/g, "")
+    .split("'")
+    .filter((x) => !!x)
+    .join(" | ");
+};
+
 const removeAllExceptBool = (i) => {
   //naive approach, regex didn't want to play ball
   if (i.toLowerCase().includes("true")) {
@@ -71,7 +79,7 @@ export const AmmunitionParser = () => {
             },
             {
               name: "TraitsToken",
-              formatter: genericClean,
+              formatter: traitsTokenFormatter,
             },
             {
               name: "Level",
