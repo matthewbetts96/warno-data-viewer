@@ -30,7 +30,7 @@ const weaponManagerFormatter = (i) => {
 };
 
 export const UnitParser = () => {
-  const weapons = WeaponParser();
+  const { weapons, ammunition } = WeaponParser();
   try {
     var data = fs.readFileSync(
       "C:/SteamLibrary/steamapps/common/WARNO/Mods/NoActivationPointsMod/GameData/Generated/Gameplay/Gfx/UniteDescriptor.ndf",
@@ -385,7 +385,8 @@ export const UnitParser = () => {
         return { [name]: obj };
       });
 
-    return Object.assign({}, ...unitData);
+    const units = Object.assign({}, ...unitData);
+    return { units, ammunition, weapons };
   } catch (e) {
     console.log("Error:", e.stack);
   }

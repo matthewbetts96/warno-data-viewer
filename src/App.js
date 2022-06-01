@@ -1,84 +1,101 @@
 import React, { useState, useEffect } from "react";
 import { UnitParser } from "./parsers/UnitParser";
-import { Units } from "./components/Units";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import Button from "@mui/material/Button";
+import UnitView from "./unit/UnitView";
 
 function App() {
   //what tab the user is on
   const [tabValue, setTabValue] = React.useState("1");
-  //all data of the units
-  const [unitData, setUnitData] = useState({});
-  //list of all the names of the units (for the search bar)
-  const [unitNameList, setUnitNameList] = useState([]);
-  //which units are currently selected
-  const [selectedUnits, setSelectedUnits] = useState([]);
-  //the data of the selected units
-  const [selectedUnitsData, setSelectedUnitsData] = useState([]);
+  //all data
+  const [allData, setAllData] = useState({
+    units: {},
+    weapons: {},
+    ammunition: {},
+  });
+
+  //name lists for
+  const [nameList, setNameList] = useState({
+    units: [],
+    weapons: [],
+    ammo: [],
+  });
 
   //inital run to parse and store the data and set inital values
   useEffect(() => {
-    const units = UnitParser();
-    const modifiedUnits = Object.keys(units).map((i) => {
+    const { units, weapons, ammunition } = UnitParser();
+
+    const unitLabels = Object.keys(units).map((i) => {
       return { label: i };
     });
-    setUnitData(units);
-    setUnitNameList(modifiedUnits);
-    setSelectedUnits([modifiedUnits[0]]);
-    setSelectedUnitsData([units[modifiedUnits[0].label]]);
+    const weaponLabels = Object.keys(weapons).map((i) => {
+      return { label: i };
+    });
+    const ammoLabels = Object.keys(ammunition).map((i) => {
+      return { label: i };
+    });
+
+    setAllData({
+      units: units,
+      weapons: weapons,
+      ammunition: ammunition,
+    });
+    setNameList({
+      units: unitLabels,
+      weapons: weaponLabels,
+      ammunition: ammoLabels,
+    });
   }, []);
 
   //handle search boxes and data changing dynamically
-  const handleSearchBoxChange = (newValue, idx) => {
-    console.log(newValue);
-    if (!newValue) {
-      return;
-    }
-    let tempSelectedUnits = selectedUnits;
-    tempSelectedUnits[idx] = newValue;
-    setSelectedUnits([...tempSelectedUnits]);
-
-    const label = newValue.label;
-    const data = unitData[label];
-    let tempSelectedUnitsData = selectedUnitsData;
-    tempSelectedUnitsData[idx] = data;
-    setSelectedUnitsData([...tempSelectedUnitsData]);
+  const handleSearchBoxChange = ({ newValue, idx, selected, data }) => {
+    // if (!newValue) {
+    //   return;
+    // }
+    // let temp = selectedUnits;
+    // temp[idx] = newValue;
+    // setSelectedUnits([...temp]);
+    // const label = newValue.label;
+    // const data = unitData[label];
+    // let tempSelectedUnitsData = selectedUnitsData;
+    // tempSelectedUnitsData[idx] = data;
+    // setSelectedUnitsData([...tempSelectedUnitsData]);
   };
 
-  const addNewUnitToCompare = () => {
-    // debugger;
-    let tempSelectedUnits = selectedUnits;
-    tempSelectedUnits.push(unitNameList[0]);
-    setSelectedUnits([...tempSelectedUnits]);
+  // //handle when a new unit gets added
+  // const addNewUnitToCompare = () => {
+  //   let tempSelectedUnits = selectedUnits;
+  //   tempSelectedUnits.push(unitNameList[0]);
+  //   setSelectedUnits([...tempSelectedUnits]);
 
-    let tempSelectedUnitsData = selectedUnitsData;
-    console.log(tempSelectedUnitsData);
-    tempSelectedUnitsData.push(
-      unitData[selectedUnits[selectedUnits.length - 1].label]
-    );
-    console.log(tempSelectedUnitsData);
-    console.log();
-    setSelectedUnitsData([...tempSelectedUnitsData]);
-  };
+  //   let tempSelectedUnitsData = selectedUnitsData;
+  //   console.log(tempSelectedUnitsData);
+  //   tempSelectedUnitsData.push(
+  //     unitData[selectedUnits[selectedUnits.length - 1].label]
+  //   );
+  //   setSelectedUnitsData([...tempSelectedUnitsData]);
+  // };
 
-  const removeUnitComparision = (idx) => {
-    let tempSelectedUnits = selectedUnits;
-    tempSelectedUnits.splice(idx, 1);
-    setSelectedUnits([...tempSelectedUnits]);
+  // //handle removal of a unit from pos idx
+  // const removeUnitComparision = (idx) => {
+  //   let tempSelectedUnits = selectedUnits;
+  //   tempSelectedUnits.splice(idx, 1);
+  //   setSelectedUnits([...tempSelectedUnits]);
 
-    let tempSelectedUnitsData = selectedUnitsData;
-    tempSelectedUnitsData.splice(idx, 1);
-    setSelectedUnitsData([...tempSelectedUnitsData]);
-  };
+  //   let tempSelectedUnitsData = selectedUnitsData;
+  //   tempSelectedUnitsData.splice(idx, 1);
+  //   setSelectedUnitsData([...tempSelectedUnitsData]);
+  // };
 
   //handle tab changes
   const handleTabChange = (_, newValue) => {
     setTabValue(newValue);
   };
+  // console.log(data);
+  // console.log(nameList);
 
   return (
     <div className="App">
@@ -90,21 +107,19 @@ function App() {
               aria-label="lab API tabs example"
             >
               <Tab label="Units" value="1" />
-              <Tab label="Weapons" value="2" />
-              <Tab label="Ammunition" value="3" />
+              <Tab label="Weapons" value="2" disabled />
+              <Tab label="Ammunition" value="3" disabled />
             </TabList>
           </Box>
           <TabPanel value="1">
-            <Button variant="contained" onClick={() => addNewUnitToCompare()}>
-              Add new unit
-            </Button>
-            <div
+            <UnitView nameList={nameList} allData={allData} />
+            {/* <div
               style={{
                 display: "flex",
                 width: "100%",
               }}
             >
-              {selectedUnits.map((_, idx) => {
+              {/* {selectedUnits.map((_, idx) => {
                 return (
                   <Units
                     unitNameList={unitNameList}
@@ -117,20 +132,14 @@ function App() {
                     key={idx}
                   />
                 );
-              })}
-
-              {/* //todo unit comparision */}
-              {/* <Units
-                unitNameList={unitNameList}
-                selectedUnit={selectedUnit}
-                setSelectedUnit={setSelectedUnit}
-                selectedUnitData={selectedUnitData}
-              /> */}
-              {/* <Button variant="contained">Contained</Button> */}
-            </div>
+              })} */}
+            {/* </div> */}
           </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
+          <TabPanel value="2">hello</TabPanel>
+          <TabPanel value="3">
+            hello
+            {/* <AmmoTab nameList={nameList} allData={data} /> */}
+          </TabPanel>
         </TabContext>
       </Box>
     </div>

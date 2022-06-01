@@ -34,297 +34,295 @@ const removeAllExceptBool = (i) => {
 
 export const AmmunitionParser = () => {
   try {
-    var data = fs.readFileSync(
+    let data = fs.readFileSync(
       "C:/SteamLibrary/steamapps/common/WARNO/Mods/NoActivationPointsMod/GameData/Generated/Gameplay/Gfx/Ammunition.ndf",
       "utf8"
     );
 
-    const ammoData = Object.assign(
-      {},
-      ...data
-        .toString()
-        .split("export")
-        .slice(1)
-        .map((unit) => {
-          const name = unit.split("is TAmmunitionDescriptor")[0].trim();
-          const unitData = unit
-            .split("is TAmmunitionDescriptor")[1]
-            .replace(/ {2,}/g, "\n")
-            .split(/[\n=]+/)
-            .filter((item) => {
-              if (
-                item === "" ||
-                item.includes("//") ||
-                item === ")" ||
-                item === "("
-              ) {
-                return false;
-              }
+    const allData = data.toString().split("export").slice(1);
+    const unitData = allData
+      .map((foo) => {
+        const name = foo.split("is TAmmunitionDescriptor")[0].trim();
+        const other = foo
+          .split("is TAmmunitionDescriptor")[1]
+          .replace(/ {2,}/g, "\n")
+          .split(/[\n=]+/);
+        const cleanedData = other.filter((item) => {
+          if (
+            item === "" ||
+            item.includes("//") ||
+            item === ")" ||
+            item === "("
+          ) {
+            return false;
+          }
 
-              return true;
-            });
+          return true;
+        });
 
-          const valuesToFind = [
-            {
-              name: "Name",
-              formatter: genericClean,
-            },
-            {
-              name: "TypeName",
-              formatter: genericClean,
-            },
-            {
-              name: "Caliber",
-              formatter: genericClean,
-            },
-            {
-              name: "TraitsToken",
-              formatter: traitsTokenFormatter,
-            },
-            {
-              name: "Level",
-              formatter: genericClean,
-            },
-            {
-              name: "Puissance",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxTirs",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxTirs_Min",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxTirs_Max",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxFx",
-              formatter: genericClean,
-            },
-            {
-              name: "PorteeMaximale",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PorteeMinimale",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PorteeMinimaleTBA",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PorteeMaximaleTBA",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PorteeMinimaleHA",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PorteeMaximaleHA",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "AltitudeAPorteeMinimale",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "AltitudeAPorteeMaximale",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "AffecteParNombre",
-              formatter: genericClean,
-            },
-            {
-              name: "AngleDispersion",
-              formatter: genericClean,
-            },
-            {
-              name: "DispersionAtMaxRange",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "DispersionAtMinRange",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "CorrectedShotAimtimeMultiplier",
-              formatter: genericClean,
-            },
-            {
-              name: "RadiusSplashPhysicalDamages",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "PhysicalDamages",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "RadiusSplashSuppressDamages",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "SuppressDamages",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "RayonPinned",
-              formatter: removeAllBarNumbers,
-            },
-            {
-              name: "AllowSuppressDamageWhenNoImpact",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "DisplaySalveAccuracy",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "TirIndirect",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "TirReflexe",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "InterdireTirReflexe",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "TempsAnimation",
-              formatter: genericClean,
-            },
-            {
-              name: "NoiseDissimulationMalus",
-              formatter: genericClean,
-            },
-            {
-              name: "ShotsBeforeMaxNoise",
-              formatter: genericClean,
-            },
-            {
-              name: "TargetsDistricts",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "TempsDeVisee",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxSalves",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxSalves_Min",
-              formatter: genericClean,
-            },
-            {
-              name: "TempsEntreDeuxSalves_Max",
-              formatter: genericClean,
-            },
-            {
-              name: "SupplyCost",
-              formatter: genericClean,
-            },
-            {
-              name: "NbSalvosShootOnPosition",
-              formatter: genericClean,
-            },
-            {
-              name: "CanShootOnPosition",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanShootWhileMoving",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "NbrProjectilesSimultanes",
-              formatter: genericClean,
-            },
-            {
-              name: "AffichageMunitionParSalve",
-              formatter: genericClean,
-            },
-            {
-              name: "SmokeDescriptor",
-              formatter: genericClean,
-            },
-            {
-              name: "TargetUnitCenter",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanHarmInfantry",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanHarmVehicles",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanHarmHelicopters",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanHarmAirplanes",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "CanHarmGuidedMissiles",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "IsHarmlessForAllies",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "PiercingWeapon",
-              formatter: removeAllExceptBool,
-            },
-            {
-              name: "FlightTimeForSpeed",
-              formatter: genericClean,
-            },
-            {
-              name: "DistanceForSpeed",
-              formatter: removeAllBarNumbers,
-            },
-          ];
+        const valuesToFind = [
+          {
+            name: "Name",
+            formatter: genericClean,
+          },
+          {
+            name: "TypeName",
+            formatter: genericClean,
+          },
+          {
+            name: "Caliber",
+            formatter: genericClean,
+          },
+          {
+            name: "TraitsToken",
+            formatter: traitsTokenFormatter,
+          },
+          {
+            name: "Level",
+            formatter: genericClean,
+          },
+          {
+            name: "Puissance",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxTirs",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxTirs_Min",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxTirs_Max",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxFx",
+            formatter: genericClean,
+          },
+          {
+            name: "PorteeMaximale",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PorteeMinimale",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PorteeMinimaleTBA",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PorteeMaximaleTBA",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PorteeMinimaleHA",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PorteeMaximaleHA",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "AltitudeAPorteeMinimale",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "AltitudeAPorteeMaximale",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "AffecteParNombre",
+            formatter: genericClean,
+          },
+          {
+            name: "AngleDispersion",
+            formatter: genericClean,
+          },
+          {
+            name: "DispersionAtMaxRange",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "DispersionAtMinRange",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "CorrectedShotAimtimeMultiplier",
+            formatter: genericClean,
+          },
+          {
+            name: "RadiusSplashPhysicalDamages",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "PhysicalDamages",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "RadiusSplashSuppressDamages",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "SuppressDamages",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "RayonPinned",
+            formatter: removeAllBarNumbers,
+          },
+          {
+            name: "AllowSuppressDamageWhenNoImpact",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "DisplaySalveAccuracy",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "TirIndirect",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "TirReflexe",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "InterdireTirReflexe",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "TempsAnimation",
+            formatter: genericClean,
+          },
+          {
+            name: "NoiseDissimulationMalus",
+            formatter: genericClean,
+          },
+          {
+            name: "ShotsBeforeMaxNoise",
+            formatter: genericClean,
+          },
+          {
+            name: "TargetsDistricts",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "TempsDeVisee",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxSalves",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxSalves_Min",
+            formatter: genericClean,
+          },
+          {
+            name: "TempsEntreDeuxSalves_Max",
+            formatter: genericClean,
+          },
+          {
+            name: "SupplyCost",
+            formatter: genericClean,
+          },
+          {
+            name: "NbSalvosShootOnPosition",
+            formatter: genericClean,
+          },
+          {
+            name: "CanShootOnPosition",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanShootWhileMoving",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "NbrProjectilesSimultanes",
+            formatter: genericClean,
+          },
+          {
+            name: "AffichageMunitionParSalve",
+            formatter: genericClean,
+          },
+          {
+            name: "SmokeDescriptor",
+            formatter: genericClean,
+          },
+          {
+            name: "TargetUnitCenter",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanHarmInfantry",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanHarmVehicles",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanHarmHelicopters",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanHarmAirplanes",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "CanHarmGuidedMissiles",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "IsHarmlessForAllies",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "PiercingWeapon",
+            formatter: removeAllExceptBool,
+          },
+          {
+            name: "FlightTimeForSpeed",
+            formatter: genericClean,
+          },
+          {
+            name: "DistanceForSpeed",
+            formatter: removeAllBarNumbers,
+          },
+        ];
 
-          return {
-            [name]: valuesToFind.map(
-              ({
-                name,
-                formatter = (i) => i,
-                indexOffset = 1,
-                overrideName,
-              }) => {
-                const idx = unitData.findIndex((i) => i.includes(name));
-                const key = overrideName || name;
-                if (idx === -1) {
-                  return {
-                    [key]: null,
-                  };
-                }
+        const array = valuesToFind.map(
+          ({ name, formatter = (i) => i, indexOffset = 1, overrideName }) => {
+            const idx = cleanedData.findIndex((i) => i.includes(name));
+            const key = overrideName || name;
 
-                return {
-                  [key]: formatter(unitData[idx + indexOffset]),
-                };
-              }
-            ),
-          };
-        })
-    );
+            if (idx === -1) {
+              return {
+                [key]: null,
+              };
+            }
 
-    return ammoData;
+            return {
+              [key]: formatter(cleanedData[idx + indexOffset]),
+            };
+          }
+        );
+
+        array.push({ ClassNameForDebug: name });
+
+        return array;
+      })
+      .map((i) => {
+        const obj = Object.assign({}, ...i);
+        const name = obj.ClassNameForDebug;
+        return { [name]: obj };
+      });
+
+    return Object.assign({}, ...unitData);
   } catch (e) {
     console.log("Error:", e.stack);
   }

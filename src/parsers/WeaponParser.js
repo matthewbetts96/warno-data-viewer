@@ -42,8 +42,10 @@ export const WeaponParser = () => {
           };
         })
     );
-
-    return data;
+    return {
+      ammunition: ammo,
+      weapons: data,
+    };
   } catch (e) {
     console.log("Error:", e.stack);
   }
